@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Portal Hub | Suíte de Sistemas Construtec</title>
+  <meta name="description" content="Central integrada de acesso e esteira de trabalho dos sistemas Construtec: Orçamentos, Centro de Custos e Chamados & O.S.">
+  <link rel="icon" type="image/png" href="assets/construtec-favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="refined.css">
+  <link rel="stylesheet" href="hub-portfolio.css">
+</head>
+<body>
+  <div class="hub-app">
+    <!-- Topbar Corporativa Harmonizada -->
+    <header class="hub-topbar" id="hub-topbar">
+      <div class="hub-brand">
+        <img class="hub-brand-symbol" src="assets/construtec-favicon.png" alt="CONSTRUTEC" id="hub-logo-img">
+        <span class="hub-brand-divider"></span>
+        <div class="hub-brand-text">
+          <span class="hub-suite-title">Portal Hub Construtec</span>
+          <span class="hub-suite-sub">Mesa Operacional & Esteira de Trabalho</span>
+        </div>
+      </div>
+
+      <div class="hub-topbar-center">
+        <div class="hub-clock-badge" id="hub-clock-display" title="Horário do sistema">
+          <span class="clock-dot"></span>
+          <span id="hub-time">--:--:--</span>
+          <span class="clock-date" id="hub-date">--/--/----</span>
+        </div>
+        <div class="live-server-tag" title="Hub local em execução nesta máquina">
+          <span class="live-pulse-dot"></span>
+          <span>Hub Local Ativo</span>
+        </div>
+      </div>
+
+      <div class="hub-topbar-actions">
+        <!-- Botão de Configurações de Portas / URLs -->
+        <button id="btn-open-settings" class="hub-btn-icon" type="button" title="Configurar portas e URLs dos sistemas" aria-label="Configurar portas">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span class="btn-text">Portas</span>
+        </button>
+
+        <!-- Botão Alternador de Tema -->
+        <button id="hub-theme-toggle" class="btn-theme-toggle" type="button" aria-label="Alternar modo claro e noturno" title="Alternar tema claro/noturno">
+          <span class="theme-knob"></span>
+          <span class="theme-label">Tema</span>
+        </button>
+
+        <div class="hub-divider-vertical"></div>
+
+        <!-- Perfil do Usuário -->
+        <div class="hub-profile-pill">
+          <div class="hub-avatar" id="hub-user-avatar">CT</div>
+          <div class="hub-user-info">
+            <strong id="hub-user-name">Construtec</strong>
+            <span>Suíte</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Barra Seletora para Celular (Mobile Navigation Tabs) -->
+    <nav class="hub-mobile-tabs" id="hub-mobile-tabs">
+      <button class="mobile-tab-btn active" id="tab-btn-sistemas" type="button">
+        <span>Módulos da Esteira</span>
+        <span class="tab-badge">3</span>
+      </button>
+      <button class="mobile-tab-btn" id="tab-btn-preview" type="button">
+        <span>Pré-visualização</span>
+        <span class="tab-badge live" id="mobile-tab-status">Online</span>
+      </button>
+    </nav>
+
+    <!-- Layout Dividido: Aba Lateral + Palco de Pré-visualização -->
+    <div class="hub-workspace-layout" id="hub-workspace-layout">
+      
+      <!-- ABA LATERAL COM OS SISTEMAS (ESTEIRA) -->
+      <aside class="hub-sidebar" id="hub-sidebar">
+        <div class="sidebar-head">
+          <div class="sidebar-eyebrow">
+            <span class="pulse-beacon"></span>
+            ESTEIRA DE TRABALHO
+          </div>
+          <h2 class="sidebar-title">Módulos Construtec</h2>
+          <p class="sidebar-desc">
+            Toque para pré-visualizar a tela inicial ao vivo. Dê <strong>duplo clique</strong> para abrir o sistema.
+          </p>
+        </div>
+
+        <!-- Lista dos Quadradinhos dos Sistemas -->
+        <div class="systems-vertical-list" id="systems-list">
+          
+          <!-- ITEM 1: CONSTRUTEC ORÇAMENTOS -->
+          <div class="system-list-card active" data-system="orcamentos" id="item-orcamentos" tabindex="0" role="button" aria-label="Construtec Orçamentos">
+            <div class="system-card-indicator"></div>
+            <div class="system-square-icon orcamentos-sq">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+            </div>
+            <div class="system-item-details">
+              <div class="system-item-top">
+                <span class="system-stage-pill">Etapa 01</span>
+                <span class="system-status-mini" id="mini-status-orcamentos">Parado</span>
+              </div>
+              <strong class="system-item-name">Construtec Orçamentos</strong>
+              <p class="system-item-summary">Elaboração de propostas comerciais, composições de itens e BDI.</p>
+            </div>
+          </div>
+
+          <!-- ITEM 2: CENTRO DE CUSTOS V3 -->
+          <div class="system-list-card" data-system="centro" id="item-centro" tabindex="0" role="button" aria-label="Centro de Custos v3">
+            <div class="system-card-indicator"></div>
+            <div class="system-square-icon centro-sq">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+            </div>
+            <div class="system-item-details">
+              <div class="system-item-top">
+                <span class="system-stage-pill">Etapa 02</span>
+                <span class="system-status-mini online" id="mini-status-centro">Online</span>
+              </div>
+              <strong class="system-item-name">Centro de Custos v3</strong>
+              <p class="system-item-summary">Gestão financeira de obras, despesas, lançamentos e fluxo de caixa.</p>
+            </div>
+          </div>
+
+          <!-- ITEM 3: CHAMADOS & ORDENS DE SERVIÇO -->
+          <div class="system-list-card" data-system="chamados" id="item-chamados" tabindex="0" role="button" aria-label="Chamados e Ordens de Serviço">
+            <div class="system-card-indicator"></div>
+            <div class="system-square-icon chamados-sq">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+              </svg>
+            </div>
+            <div class="system-item-details">
+              <div class="system-item-top">
+                <span class="system-stage-pill pending">Etapa 03</span>
+                <span class="system-status-mini preparing" id="mini-status-chamados">Em Preparação</span>
+              </div>
+              <strong class="system-item-name">Chamados & O.S.</strong>
+              <p class="system-item-summary">Atendimento técnico, ordens de serviço em campo e pós-obra.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Rodapé da Lateral com Dica de Uso -->
+        <div class="sidebar-footer">
+          <div class="mouse-hint">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="7"></rect>
+              <line x1="12" y1="6" x2="12" y2="10"></line>
+            </svg>
+            <span><strong>Clique/Toque:</strong> Pré-visualizar<br><strong>Duplo clique:</strong> Abrir sistema</span>
+          </div>
+          <button id="btn-refresh-status" class="btn-check-conns" title="Verificar status dos serviços locais">
+            Testar Conexões Locais
+          </button>
+        </div>
+      </aside>
+
+      <!-- PALCO DE PRÉ-VISUALIZAÇÃO DA TELA DE INÍCIO -->
+      <main class="hub-preview-stage" id="hub-preview-stage">
+        
+        <!-- Header do Palco de Pré-visualização -->
+        <div class="preview-stage-header">
+          <button id="btn-back-to-list" class="btn-back-mobile" type="button" aria-label="Voltar para a lista">
+            ← Lista de Módulos
+          </button>
+
+          <div class="preview-title-block">
+            <div class="preview-badge-row">
+              <span class="preview-stage-badge" id="preview-stage-badge">Etapa 01 • Pontapé Inicial</span>
+              <span class="preview-url-pill" id="preview-url-pill">http://localhost:5173</span>
+            </div>
+            <h1 class="preview-system-title" id="preview-system-title">Construtec Orçamentos</h1>
+          </div>
+
+          <div class="preview-actions">
+            <span class="preview-hint-tag">Duplo clique para abrir</span>
+            <button class="btn-open-system-primary" id="btn-open-current-system" type="button">
+              <span>Abrir Sistema</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cockpit Consolidado da Carteira de Obras (Multi-Obras) -->
+        <div id="hub-portfolio-container"></div>
+
+        <!-- Moldura da Janela (Window Canvas) -->
+        <div class="preview-window-canvas" id="preview-window-canvas" title="Dê duplo clique para abrir este sistema">
+          <div class="window-canvas-topbar">
+            <div class="window-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="window-address-bar" id="window-address-bar">
+              <span id="address-url-text">http://localhost:5173</span> — Tela Inicial Real
+            </div>
+            <!-- Alternador de Modo: Iframe Real vs Tela Estruturada -->
+            <div class="window-mode-controls">
+              <span class="live-indicator-dot" id="live-indicator-dot"></span>
+              <span class="window-mode-text" id="window-mode-text">Ao Vivo</span>
+            </div>
+          </div>
+
+          <!-- ÁREA DE CONTEÚDO DA PRÉ-VISUALIZAÇÃO (ALTERNA CONFORME O SISTEMA) -->
+          <div class="preview-viewport-content" id="preview-viewport-content">
+
+            <!-- PREVIEW 1: CONSTRUTEC ORÇAMENTOS (INTERFACE REAL DA MESA OPERACIONAL) -->
+            <div class="system-preview-view active" id="view-preview-orcamentos">
+              <div class="orcamentos-real-shell">
+                <!-- Topbar fiel do Construtec Orçamentos -->
+                <header class="orc-topbar">
+                  <div class="orc-brand">Construtec Orçamentos</div>
+                  <div class="orc-local-state">
+                    <span class="orc-status-dot"></span> Offline
+                    <span class="orc-tag-local">Dados locais ▾</span>
+                  </div>
+                  <div class="orc-search-box">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <span>Buscar no catálogo</span>
+                    <kbd>Ctrl+K</kbd>
+                  </div>
+                  <div class="orc-top-actions">
+                    <button class="orc-icon-btn" title="Notificações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></button>
+                    <button class="orc-icon-btn" title="Ajuda"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+                    <span class="orc-divider"></span>
+                    <div class="orc-profile">
+                      <span class="orc-avatar">MR</span>
+                      <b>Marcos Ribeiro</b>
+                      <span class="orc-caret">▾</span>
+                    </div>
+                  </div>
+                </header>
+
+                <!-- Corpo: Sidebar de Ícones + Workspace de Propostas -->
+                <div class="orc-workspace-grid">
+                  <aside class="orc-sidebar">
+                    <nav>
+                      <button type="button" class="orc-nav-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><span>Início</span></button>
+                      <button type="button" class="orc-nav-btn active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg><span>Propostas</span></button>
+                      <button type="button" class="orc-nav-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg><span>Catálogo</span></button>
+                      <button type="button" class="orc-nav-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span>Clientes</span></button>
+                      <button type="button" class="orc-nav-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg><span>Kits</span></button>
+                      <button type="button" class="orc-nav-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Configurações</span></button>
+                    </nav>
+                  </aside>
+
+                  <main class="orc-main-content">
+                    <!-- Abas de Proposta -->
+                    <div class="orc-proposal-tabs">
+                      <button class="orc-tab-item active">PROP-2026-001 • REV.00</button>
+                      <button class="orc-tab-item">PROP-2026-002 • REV.01</button>
+                      <button class="orc-tab-new">+ Nova proposta</button>
+                    </div>
+
+                    <!-- Meta Bar -->
+                    <div class="orc-meta-bar">
+                      <div class="orc-meta-field"><label>Cliente</label><strong>Hospital Santa Cruz</strong></div>
+                      <div class="orc-meta-field"><label>Obra</label><strong>Subestação 02 • Climatização</strong></div>
+                      <div class="orc-meta-field"><label>Status</label><span class="orc-pill-status">Em edição</span></div>
+                      <div class="orc-meta-field"><label>Validade</label><span>30 dias</span></div>
+                      <div class="orc-meta-field"><label>Responsável</label><span>Marcos Ribeiro</span></div>
+                    </div>
+
+                    <!-- Toolbar de Ações de Itens -->
+                    <div class="orc-toolbar">
+                      <button class="orc-btn-primary">+ Inserir ▾</button>
+                      <button class="orc-btn-default">Excluir</button>
+                      <button class="orc-btn-default">Duplicar</button>
+                      <button class="orc-btn-default">Mover ▾</button>
+                      <button class="orc-btn-default">Importar ▾</button>
+                      <div class="orc-toolbar-spacer"></div>
+                      <button class="orc-btn-outline">Pré-visualizar</button>
+                      <button class="orc-btn-success">Exportar PDF/Word</button>
+                    </div>
+
+                    <!-- Tabela Real de Itens -->
+                    <div class="orc-table-scroll">
+                      <table class="orc-table">
+                        <thead>
+                          <tr>
+                            <th>#</th><th>Código</th><th>Descrição do Insumo / Serviço</th><th>Qtd</th><th>Un</th><th>Custo Unit.</th><th>Custo Total</th><th>Venda Unit.</th><th>Venda Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>1</td><td>ELE-001</td><td>Cabo de Cobre Flexível 2,5mm² 750V</td><td>500</td><td>m</td><td>R$ 3,20</td><td>R$ 1.600,00</td><td>R$ 4,48</td><td>R$ 2.240,00</td>
+                          </tr>
+                          <tr>
+                            <td>2</td><td>ELE-014</td><td>Disjuntor Termomagnético Tripolar 50A</td><td>4</td><td>un</td><td>R$ 85,00</td><td>R$ 340,00</td><td>R$ 119,00</td><td>R$ 476,00</td>
+                          </tr>
+                          <tr>
+                            <td>3</td><td>TUB-009</td><td>Tubo de Cobre Rígido 5/8" p/ Refrigeração</td><td>60</td><td>m</td><td>R$ 42,50</td><td>R$ 2.550,00</td><td>R$ 59,50</td><td>R$ 3.570,00</td>
+                          </tr>
+                          <tr>
+                            <td>4</td><td>CLI-002</td><td>Unidade Condensadora Splitão 60.000 BTU/h</td><td>2</td><td>un</td><td>R$ 7.800,00</td><td>R$ 15.600,00</td><td>R$ 10.920,00</td><td>R$ 21.840,00</td>
+                          </tr>
+                          <tr>
+                            <td>5</td><td>SER-001</td><td>Mão de Obra Especializada de Instalação HVAC</td><td>80</td><td>h</td><td>R$ 65,00</td><td>R$ 5.200,00</td><td>R$ 91,00</td><td>R$ 7.280,00</td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td colspan="6" style="text-align:right"><strong>Totais Consolidados da Proposta:</strong></td>
+                            <td><strong>R$ 25.290,00</strong></td>
+                            <td style="color:#01b7f1"><strong>BDI: 28%</strong></td>
+                            <td style="color:#10b981;font-size:13px"><strong>R$ 35.406,00</strong></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </main>
+                </div>
+              </div>
+            </div>
+
+            <!-- PREVIEW 2: CENTRO DE CUSTOS V3 (IFRAME AO VIVO REAL DA PORTA 3333) -->
+            <div class="system-preview-view" id="view-preview-centro">
+              <div class="live-iframe-wrapper">
+                <iframe id="iframe-centro" class="system-live-iframe" src="http://localhost:3333" title="Centro de Custos v3 Ao Vivo" loading="lazy"></iframe>
+                <div class="iframe-fallback-overlay oculto" id="iframe-centro-fallback">
+                  <div class="fallback-card">
+                    <span class="fallback-icon"></span>
+                    <h3>Servidor Local Parado</h3>
+                    <p>O Centro de Custos v3 não está respondendo em http://localhost:3333.</p>
+                    <button class="btn-primary" onclick="window.open('http://localhost:3333', '_blank')">Abrir no Navegador</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PREVIEW 3: CHAMADOS & ORDENS DE SERVIÇO (ESTRUTURA REAL DO NOVO APP) -->
+            <div class="system-preview-view" id="view-preview-chamados">
+              <div class="chamados-real-shell">
+                <header class="cham-topbar">
+                  <div class="cham-brand">
+                    <img class="hub-brand-logo" src="assets/logo-branca.png" alt="CONSTRUTEC" style="height:20px">
+                    <span>Chamados & Ordens de Serviço (O.S.)</span>
+                  </div>
+                  <div class="cham-top-right">
+                    <span class="badge-preparing-header">Módulo em Preparação</span>
+                  </div>
+                </header>
+
+                <div class="cham-body">
+                  <div class="cham-watermark-banner">
+                    <div class="cham-watermark-icon">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                      </svg>
+                    </div>
+                    <div class="cham-watermark-text">
+                      <h3>Ciclo Completo: Atendimento, Suporte & Pós-Obra</h3>
+                      <p>
+                        Este módulo fecha a esteira: chamados de assistência técnica, controle de ordens de serviço (O.S.), despacho de equipes de campo e controle de garantia das obras executadas.
+                      </p>
+                      <span class="cham-note-tag">A pasta do projeto será conectada posteriormente à suíte</span>
+                    </div>
+                  </div>
+
+                  <!-- Dashboard Real de Chamados -->
+                  <div class="cham-kpi-grid">
+                    <div class="cham-kpi-card">
+                      <span class="cham-lbl">Chamados Abertos</span>
+                      <strong class="cham-val" style="color:#fbbf24">12 tickets</strong>
+                      <span class="cham-sub">3 em prioridade alta</span>
+                    </div>
+                    <div class="cham-kpi-card">
+                      <span class="cham-lbl">O.S. em Atendimento</span>
+                      <strong class="cham-val" style="color:#01b7f1">6 equipes</strong>
+                      <span class="cham-sub">técnicos em campo</span>
+                    </div>
+                    <div class="cham-kpi-card">
+                      <span class="cham-lbl">Concluídos no Mês</span>
+                      <strong class="cham-val" style="color:#10b981">34 chamados</strong>
+                      <span class="cham-sub">SLA médio de 2.4h</span>
+                    </div>
+                    <div class="cham-kpi-card">
+                      <span class="cham-lbl">Garantia Ativa</span>
+                      <strong class="cham-val">8 obras</strong>
+                      <span class="cham-sub">cobertura técnica</span>
+                    </div>
+                  </div>
+
+                  <!-- Tabela de O.S. Recentes -->
+                  <div class="cham-table-card">
+                    <div class="cham-table-head">
+                      <strong>Ordens de Serviço em Aberto</strong>
+                      <span class="cham-table-count">Acompanhamento em tempo real</span>
+                    </div>
+                    <table class="cham-table">
+                      <thead>
+                        <tr>
+                          <th>O.S. #</th><th>Obra / Local</th><th>Solicitante</th><th>Tipo</th><th>Prioridade</th><th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><strong>OS-2026-104</strong></td>
+                          <td>Subestação 02 Hospital Santa Cruz</td>
+                          <td>Eng. Carlos Lima</td>
+                          <td>Manutenção Preventiva</td>
+                          <td><span class="cham-priority high">Alta</span></td>
+                          <td><span class="cham-status-pill yellow">Em Atendimento</span></td>
+                        </tr>
+                        <tr>
+                          <td><strong>OS-2026-103</strong></td>
+                          <td>Edifício Alfa • Instalação</td>
+                          <td>Coordenação Alfa</td>
+                          <td>Ajuste de Refrigeração</td>
+                          <td><span class="cham-priority medium">Média</span></td>
+                          <td><span class="cham-status-pill blue">Triagem</span></td>
+                        </tr>
+                        <tr>
+                          <td><strong>OS-2026-102</strong></td>
+                          <td>Galpão Logístico</td>
+                          <td>Gerência Operacional</td>
+                          <td>Revisão de Dutos</td>
+                          <td><span class="cham-priority low">Baixa</span></td>
+                          <td><span class="cham-status-pill green">Concluída</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Modal de Configuração de Portas / URLs -->
+    <div id="modal-settings" class="hub-modal-backdrop oculto" role="dialog" aria-modal="true" aria-labelledby="modal-settings-title">
+      <div class="hub-modal-card">
+        <div class="hub-modal-header">
+          <div>
+            <h2 id="modal-settings-title">Configurar Portas e Conexões</h2>
+            <p>Ajuste os endereços locais onde cada sistema da suíte está rodando.</p>
+          </div>
+          <button id="btn-close-settings" class="hub-btn-close" type="button" aria-label="Fechar">×</button>
+        </div>
+
+        <form id="form-settings" class="hub-modal-body">
+          <div class="form-group">
+            <label for="input-url-orcamentos">URL do Construtec Orçamentos (Etapa 01):</label>
+            <input type="url" id="input-url-orcamentos" placeholder="http://localhost:5173" required>
+            <small>Padrão: http://localhost:5173 (Vite/Electron)</small>
+          </div>
+
+          <div class="form-group">
+            <label for="input-url-centro">URL do Centro de Custos v3 (Etapa 02):</label>
+            <input type="url" id="input-url-centro" placeholder="http://localhost:3333" required>
+            <small>Padrão: http://localhost:3333 (Node.js)</small>
+          </div>
+
+          <div class="form-group">
+            <label for="input-url-chamados">URL do App de Chamados & O.S. (Etapa 03):</label>
+            <input type="url" id="input-url-chamados" placeholder="http://localhost:3334" required>
+            <small>Porta sugerida para o projeto futuro: 3334</small>
+          </div>
+
+          <div class="hub-modal-actions">
+            <button type="button" class="btn-secondary" id="btn-reset-settings">Restaurar Padrões</button>
+            <button type="submit" class="btn-primary">Salvar e Testar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="hub-notifications" class="hub-notifications" aria-live="polite" aria-atomic="false"></div>
+
+  </div>
+
+  <script src="hub-portfolio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

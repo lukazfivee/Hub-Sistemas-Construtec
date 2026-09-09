@@ -1,0 +1,286 @@
+/* ==========================================================================
+   PORTAL HUB - COCKPIT CONSOLIDADO DA CARTEIRA DE OBRAS (MULTI-OBRAS)
+   Visual Corporativo Construtec Engenharia - Zero Emojis (SVG Apenas)
+   ========================================================================== */
+
+.hub-portfolio-cockpit {
+  background: linear-gradient(135deg, rgba(18, 32, 54, 0.96) 0%, rgba(7, 25, 38, 0.98) 100%);
+  border: 1px solid rgba(8, 92, 229, 0.25);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+body.light-theme .hub-portfolio-cockpit {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.hub-cockpit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+body.light-theme .hub-cockpit-header {
+  border-bottom-color: #e2e8f0;
+}
+
+.hub-cockpit-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hub-cockpit-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #01b7f1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+body.light-theme .hub-cockpit-eyebrow {
+  color: #085ce5;
+}
+
+.hub-cockpit-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+body.light-theme .hub-cockpit-title {
+  color: #0f172a;
+}
+
+.hub-cockpit-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hub-cockpit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.hub-cockpit-badge.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.hub-cockpit-badge.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.hub-cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.hub-cockpit-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+body.light-theme .hub-cockpit-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.hub-cockpit-card:hover {
+  border-color: rgba(8, 92, 229, 0.4);
+  transform: translateY(-1px);
+}
+
+.hub-card-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+body.light-theme .hub-card-label {
+  color: #64748b;
+}
+
+.hub-card-val {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #f8fafc;
+  font-variant-numeric: tabular-nums;
+}
+
+body.light-theme .hub-card-val {
+  color: #1e293b;
+}
+
+.hub-card-val.positive {
+  color: #10b981;
+}
+
+.hub-card-val.accent {
+  color: #01b7f1;
+}
+
+body.light-theme .hub-card-val.accent {
+  color: #085ce5;
+}
+
+.hub-card-sub {
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+.hub-cockpit-meter {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+body.light-theme .hub-cockpit-meter {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.hub-meter-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: #cbd5e1;
+}
+
+body.light-theme .hub-meter-info {
+  color: #334155;
+}
+
+.hub-meter-bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+body.light-theme .hub-meter-bar-track {
+  background: #cbd5e1;
+}
+
+.hub-meter-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #085ce5 0%, #01b7f1 100%);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hub-meter-bar-fill.warning {
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+.hub-meter-bar-fill.danger {
+  background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+}
+
+.hub-card-portfolio-chip {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: rgba(8, 92, 229, 0.08);
+  border: 1px solid rgba(8, 92, 229, 0.2);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  gap: 8px;
+}
+
+body.light-theme .hub-card-portfolio-chip {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.hub-chip-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.hub-chip-metric span:first-child {
+  font-size: 0.62rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+body.light-theme .hub-chip-metric span:first-child {
+  color: #64748b;
+}
+
+.hub-chip-metric strong {
+  font-size: 0.78rem;
+  color: #01b7f1;
+}
+
+body.light-theme .hub-chip-metric strong {
+  color: #085ce5;
+}
+
+.hub-chip-metric strong.balance-val {
+  color: #10b981;
+}
+
+.hub-offline-notice {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 768px) {
+  .hub-portfolio-cockpit {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+  .hub-cockpit-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

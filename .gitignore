@@ -1,0 +1,11 @@
+node_modules/
+dist/
+out/
+graphify-out/
+*.log
+.env
+.env.*
+!.env.example
+*.tar.gz
+*.db
+runtime/

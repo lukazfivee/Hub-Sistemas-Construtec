@@ -1,0 +1,37 @@
+{
+  "name": "portal-hub-construtec",
+  "version": "1.0.0",
+  "description": "Portal Hub Centralizador da Suíte Construtec (Orçamentos, Centro de Custos e Chamados)",
+  "main": "desktop/main.js",
+  "scripts": {
+    "start": "node server.js",
+    "electron": "electron .",
+    "build:portable": "electron-builder --win portable --publish never"
+  },
+  "keywords": [
+    "construtec",
+    "hub",
+    "portal",
+    "launcher"
+  ],
+  "author": "Construtec Engenharia",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "electron": "^41.7.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.construtec.portal-hub",
+    "productName": "Portal Hub Construtec",
+    "directories": { "output": "dist" },
+    "files": ["server.js", "public/**/*", "desktop/**/*", "package.json"],
+    "win": {
+      "target": [{ "target": "portable", "arch": ["x64"] }],
+      "icon": "public/assets/construtec-favicon.png"
+    },
+    "portable": { "artifactName": "Portal-Hub-Construtec-${version}-Portable.${ext}" }
+  }
+}
