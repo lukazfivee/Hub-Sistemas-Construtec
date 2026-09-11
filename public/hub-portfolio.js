@@ -38,14 +38,11 @@
     </span>`;
   }
 
-  function renderSidebarChip(portfolio, isOnline) {
-    const centroCard = document.getElementById('item-centro');
+  function renderCardMetrics(portfolio, isOnline) {
+    const centroCard = document.getElementById('card-centro');
     if (!centroCard) return;
 
-    const details = centroCard.querySelector('.system-item-details');
-    if (!details) return;
-
-    let chip = details.querySelector('.hub-card-portfolio-chip');
+    let chip = centroCard.querySelector('.hub-card-portfolio-chip');
 
     if (!isOnline || !portfolio) {
       if (chip) chip.remove();
@@ -55,7 +52,8 @@
     if (!chip) {
       chip = document.createElement('div');
       chip.className = 'hub-card-portfolio-chip';
-      details.appendChild(chip);
+      const body = centroCard.querySelector('.card-body');
+      if (body) body.appendChild(chip);
     }
 
     const contratado = formatCurrency(portfolio.totalContractValue);
@@ -63,18 +61,16 @@
 
     chip.innerHTML = `
       <div class="hub-chip-metric">
-        <span>Contratado</span>
-        <strong>${contratado}</strong>
+        <span>Contratado:</span> <strong>${contratado}</strong>
       </div>
-      <div class="hub-chip-metric" style="text-align: right;">
-        <span>Saldo Livre</span>
-        <strong class="balance-val">${saldo}</strong>
+      <div class="hub-chip-metric">
+        <span>Saldo Livre:</span> <strong class="balance-val">${saldo}</strong>
       </div>
     `;
   }
 
   window.renderHubPortfolio = function (portfolio, isOnline) {
-    renderSidebarChip(portfolio, isOnline);
+    renderCardMetrics(portfolio, isOnline);
 
     const container = document.getElementById('hub-portfolio-container');
     if (!container) return;

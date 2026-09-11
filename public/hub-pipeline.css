@@ -1,0 +1,309 @@
+/* ==========================================================================
+   SUÍTE CONSTRUTEC - ESTEIRA OPERACIONAL DESTILADA (DECK DE 3 PILARES)
+   Design Corporativo Deep Navy (#071926, #0f2137, #1e314b)
+   Zero Emojis • Limite: MAX_LINES <= 350
+   ========================================================================== */
+
+.hub-main-deck {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.esteira-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.esteira-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 14px;
+}
+html.dark .esteira-section-header { border-bottom-color: #1e314b; }
+
+.esteira-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+html.dark .esteira-title { color: #f8fafc; }
+
+.esteira-desc { font-size: 13px; color: #64748b; margin: 0; }
+html.dark .esteira-desc { color: #94a3b8; }
+
+.esteira-deck {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.esteira-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+}
+html.dark .esteira-card {
+  background: #0f2137;
+  border-color: #1e314b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.esteira-card:hover {
+  transform: translateY(-2px);
+  border-color: #085ce5;
+  box-shadow: 0 8px 24px rgba(8, 92, 229, 0.12);
+}
+html.dark .esteira-card:hover {
+  border-color: #01b7f1;
+  box-shadow: 0 8px 24px rgba(1, 183, 241, 0.15);
+}
+
+.esteira-card.disabled-state {
+  opacity: 0.85;
+  background: #f8fafc;
+  cursor: default;
+}
+html.dark .esteira-card.disabled-state { background: #0b1828; }
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.stage-tag-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stage-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #085ce5;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+html.dark .stage-tag { color: #38bdf8; background: #132a47; border-color: #1e3d64; }
+
+.stage-tag.pending {
+  color: #d97706;
+  background: #fef3c7;
+  border-color: #fde68a;
+}
+html.dark .stage-tag.pending { color: #fbbf24; background: #272115; border-color: #3f331b; }
+
+.stage-kbd {
+  font-family: 'IBM Plex Mono', 'Consolas', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+html.dark .stage-kbd { color: #94a3b8; background: #162438; border-color: #24364e; }
+
+.service-status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+.service-status-badge.online { background: #dcfce7; color: #15803d; }
+html.dark .service-status-badge.online { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.service-status-badge.preparing { background: #fef3c7; color: #b45309; }
+html.dark .service-status-badge.preparing { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.orcamentos-icon { background: #e0f2fe; color: #0284c7; }
+html.dark .orcamentos-icon { background: #0c2b48; color: #38bdf8; }
+.centro-icon { background: #dbeafe; color: #085ce5; }
+html.dark .centro-icon { background: #14284d; color: #60a5fa; }
+.chamados-icon { background: #fef3c7; color: #d97706; }
+html.dark .chamados-icon { background: #2b2210; color: #fbbf24; }
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+html.dark .card-title { color: #f1f5f9; }
+
+.card-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #475569;
+  margin: 0;
+}
+html.dark .card-desc { color: #94a3b8; }
+
+.card-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-card-action {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  transition: all 0.15s ease;
+}
+html.dark .btn-card-action { background: #162438; border-color: #24364e; color: #f1f5f9; }
+
+.btn-card-action:hover:not(:disabled) {
+  border-color: #085ce5;
+  color: #085ce5;
+  background: #f8fafc;
+}
+html.dark .btn-card-action:hover:not(:disabled) {
+  border-color: #01b7f1;
+  color: #38bdf8;
+  background: #1a2d47;
+}
+
+.btn-card-action.primary {
+  background: #085ce5;
+  border-color: #085ce5;
+  color: #ffffff;
+}
+.btn-card-action.primary:hover:not(:disabled) {
+  background: #074fc2;
+  border-color: #074fc2;
+}
+
+.btn-card-action.disabled,
+.btn-card-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+html.dark .btn-card-action.disabled,
+html.dark .btn-card-action:disabled { background: #121d2c; color: #64748b; border-color: #1e2b3c; }
+
+.card-port-tag {
+  font-family: 'IBM Plex Mono', 'Consolas', monospace;
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+}
+html.dark .card-port-tag { color: #64748b; }
+
+.esteira-step-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.step-connector-line {
+  width: 100%;
+  min-width: 50px;
+  height: 2px;
+  background: linear-gradient(90deg, #cbd5e1 0%, #085ce5 50%, #cbd5e1 100%);
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+html.dark .step-connector-line {
+  background: linear-gradient(90deg, #1e314b 0%, #01b7f1 50%, #1e314b 100%);
+}
+
+.step-connector-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 100%;
+  background: #085ce5;
+  animation: pulseConveyor 2.8s infinite linear;
+}
+html.dark .step-connector-pulse { background: #01b7f1; }
+
+@keyframes pulseConveyor {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+.step-connector-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+html.dark .step-connector-pill {
+  color: #94a3b8;
+  background: #122036;
+  border-color: #1e314b;
+}
+
+
+@media (max-width: 1024px) {
+  .esteira-deck { grid-template-columns: 1fr; gap: 14px; }
+  .esteira-step-connector { display: none; }
+}

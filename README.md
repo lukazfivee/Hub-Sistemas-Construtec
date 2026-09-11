@@ -1,24 +1,75 @@
 # Hub Sistemas Construtec
 
-Portal local da suíte Construtec: launcher, monitor dos serviços e cockpit da carteira de obras.
+Shell local da suíte Construtec: launcher, monitor dos serviços e cockpit da carteira de obras. O Hub é o ponto de entrada; os módulos continuam repositórios independentes e podem ser executados juntos no mesmo computador.
+
+## Pré-requisitos
+
+- Windows 10/11
+- Node.js 20 ou superior
+- Repositórios irmãos quando for usar os módulos reais:
+  - `Construtec orçamentos/construtec-orcamentos`
+  - `centro de custos CONSTRUTEC`
+  - `chamadopro` (opcional; etapa 03)
 
 ## Executar no Windows
 
-Instale Node.js 20 ou superior, clone este repositório e abra `start-hub.bat`.
-Também é possível executar `npm start` e acessar http://127.0.0.1:3000.
-O servidor web utiliza módulos nativos do Node.js e não precisa de `npm install` para iniciar.
+```powershell
+npm install
+npm start
+```
 
-## Integrações
+Abra `http://127.0.0.1:3000`. Para uso diário, abra `start-hub.bat`.
 
-- Centro de Custos: serviço separado na porta 3333 (fallback de demonstração: 3456).
-- Orçamentos: projeto separado na pasta irmã `Construtec orçamentos/construtec-orcamentos`.
-- Chamados e ordens de serviço: integração em preparação.
-- Para consultar a carteira, configure `CONSTRUTEC_INTEGRATION_KEY` no ambiente do processo com a mesma chave configurada no Centro de Custos. O Hub não carrega `.env` automaticamente. Sem a variável, o monitor funciona e a carteira fica indisponível.
+Para a janela desktop:
 
-O repositório contém somente o Hub. Bancos, backups, credenciais e os outros sistemas não estão incluídos. O acesso HTTP fica restrito ao próprio computador.
+```powershell
+npm run electron
+```
 
-O controle de encerramento local está em `lib/localControl.js`. Seus registros temporários ficam em `%LOCALAPPDATA%/Construtec/Suite/runtime` e não devem ser publicados.
+O servidor web usa módulos nativos do Node.js; `npm install` só é necessário para o wrapper Electron e o empacotamento.
 
-## Estado desktop
+## Esteira e portas
 
-O manifesto contém configuração de empacotamento Electron, mas os arquivos `desktop/` ainda não existem nesta versão. O caminho validado é o servidor web local; não há instalador desktop pronto neste repositório.
+| Etapa | Serviço | URL padrão | Estado |
+|---|---|---|---|
+| 01 | Construtec Orçamentos | `http://localhost:5173` | integrado ao monitor e launcher |
+| 02 | Centro de Custos v3 | `http://localhost:3333` | integrado, com health-check e carteira |
+| 03 | Chamados & O.S. | `http://localhost:3334` | em preparação |
+| Hub | Portal | `http://127.0.0.1:3000` | ponto de entrada |
+
+O Hub também detecta o fallback do Centro em `:3456`. As URLs locais podem ser ajustadas no modal “Configurar Portas Locais”.
+
+## Carteira consolidada
+
+Defina `CONSTRUTEC_INTEGRATION_KEY` no ambiente do processo do Hub com a mesma chave configurada no Centro de Custos. O Hub não carrega `.env` automaticamente. Sem a variável, o monitor e a esteira funcionam, mas a carteira fica indisponível.
+
+Nunca publique chaves, bancos, backups, logs ou arquivos `.env`.
+
+## Estrutura
+
+- `server.js`: servidor HTTP, health-check, status da esteira e launcher de Orçamentos.
+- `public/index.html`: shell visual do Hub.
+- `public/hub-config.js`: estado, metadados e validação de URLs locais.
+- `public/hub-status.js`: polling dos serviços e atualização dos badges.
+- `public/hub-settings.js`: configuração persistente de portas.
+- `public/hub-portfolio.js`: cockpit consolidado de obras.
+- `desktop/main.js` e `desktop/preload.js`: wrapper Electron seguro.
+- `lib/localControl.js`: encerramento autenticado e local; registros ficam em `%LOCALAPPDATA%/Construtec/Suite/runtime`.
+- `test/`: testes HTTP e de arquivos estáticos.
+
+## Testes
+
+```powershell
+npm test
+```
+
+O teste HTTP espera o Hub disponível em `127.0.0.1:3000`; para uma checagem rápida, execute `npm start` em outro terminal antes de rodar os testes.
+
+## Colaboração
+
+1. Crie uma branch a partir de `main`.
+2. Não comite `node_modules`, `dist`, `graphify-out`, logs, bancos ou credenciais.
+3. Rode `npm test` antes do pull request.
+4. Explique no PR quais portas e repositórios irmãos foram usados na validação.
+
+O repositório contém o Hub e seus assets. Os outros sistemas permanecem em seus próprios repositórios para permitir desenvolvimento independente.

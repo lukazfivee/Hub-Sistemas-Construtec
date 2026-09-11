@@ -15,7 +15,10 @@ function isOrcamentosRunning() {
 
 function getOrcamentosDir() {
   const nested = path.join(ORCAMENTOS_DIR, 'construtec-orcamentos');
-  return fs.existsSync(path.join(nested, 'package.json')) ? nested : ORCAMENTOS_DIR;
+  if (fs.existsSync(path.join(nested, 'node_modules', 'electron'))) {
+    return nested;
+  }
+  return ORCAMENTOS_DIR;
 }
 
 function startOrcamentos() {
@@ -25,13 +28,31 @@ function startOrcamentos() {
     throw new Error('Projeto Construtec Orçamentos não encontrado ao lado do Portal Hub.');
   }
 
-  orcamentosProcess = spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['start'], {
-    cwd: targetDir,
-    detached: false,
-    shell: process.platform === 'win32',
-    stdio: 'ignore',
-    windowsHide: true,
-  });
+  const isWindows = process.platform === 'win32';
+  const devScript = path.join(targetDir, 'scripts', 'dev.ps1');
+
+  if (isWindows && fs.existsSync(devScript)) {
+    orcamentosProcess = spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', devScript], {
+      cwd: targetDir,
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: false,
+    });
+  } else {
+    const cmd = isWindows ? (process.env.ComSpec || 'cmd.exe') : 'npm';
+    const args = isWindows ? ['/d', '/s', '/c', 'npm', 'run', 'dev'] : ['run', 'dev'];
+
+    orcamentosProcess = spawn(cmd, args, {
+      cwd: targetDir,
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: false,
+    });
+  }
+
+  if (typeof orcamentosProcess.unref === 'function') {
+    orcamentosProcess.unref();
+  }
   orcamentosProcess.once('error', () => { orcamentosProcess = undefined; });
   orcamentosProcess.once('exit', () => { orcamentosProcess = undefined; });
   return { started: true, alreadyRunning: false };
@@ -150,7 +171,7 @@ const server = http.createServer(async (req, res) => {
     const customCentroCustosUrl = normalizeLocalUrl(searchParams.get('centroCustosUrl')) || 'http://localhost:3333';
     const customChamadosUrl = normalizeLocalUrl(searchParams.get('chamadosUrl')) || 'http://localhost:3334';
 
-    const [, initialCentroStatus, chamadosStatus] = await Promise.all([
+    const [orcamentosStatus, initialCentroStatus, chamadosStatus] = await Promise.all([
       checkServiceHealth(customOrcamentosUrl),
       checkServiceHealth(customCentroCustosUrl),
       checkServiceHealth(customChamadosUrl),
@@ -174,6 +195,8 @@ const server = http.createServer(async (req, res) => {
       portfolio = await fetchPortfolioSummary(effectiveCentroUrl);
     }
 
+    const isOrcOnline = isOrcamentosRunning() || Boolean(orcamentosStatus?.online);
+
     const responseData = {
       timestamp: new Date().toISOString(),
       portfolio,
@@ -185,8 +208,8 @@ const server = http.createServer(async (req, res) => {
           stageTitle: 'Pontapé Inicial',
           kind: 'desktop',
           url: customOrcamentosUrl,
-          online: isOrcamentosRunning(),
-          statusLabel: isOrcamentosRunning() ? 'Aplicativo em execução' : 'Parado',
+          online: isOrcOnline,
+          statusLabel: isOrcOnline ? (isOrcamentosRunning() ? 'Aplicativo em execução' : 'Online (:5173)') : 'Parado',
         },
         centroCustos: {
           id: 'centroCustos',
