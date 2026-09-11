@@ -74,3 +74,10 @@ test('Arquivos estáticos são servidos com MIME e UTF-8 corretos', async () => 
   assert.ok(jsRes.headers['content-type']?.includes('application/javascript'));
   assert.ok(jsRes.body.includes('SYSTEMS_META'));
 });
+
+test('Electron permite URLs locais e mantém links externos fora da suíte', async () => {
+  const source = await require('node:fs').promises.readFile(require('node:path').join(__dirname, '..', 'desktop', 'main.js'), 'utf8');
+  assert.match(source, /isLocalAppUrl/);
+  assert.match(source, /return \{ action: 'allow' \}/);
+  assert.match(source, /shell\.openExternal/);
+});

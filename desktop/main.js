@@ -10,6 +10,16 @@ const http = require('http');
 
 let mainWindow;
 
+function isLocalAppUrl(value) {
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol)
+      && ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function checkServerReady(port = 3000, maxRetries = 20) {
   return new Promise((resolve) => {
     let retries = 0;
@@ -57,6 +67,7 @@ async function createWindow() {
   });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (isLocalAppUrl(url)) return { action: 'allow' };
     shell.openExternal(url);
     return { action: 'deny' };
   });

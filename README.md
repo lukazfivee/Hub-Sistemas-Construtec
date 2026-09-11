@@ -26,6 +26,8 @@ Para a janela desktop:
 npm run electron
 ```
 
+No Electron, o botão de Orçamentos inicia o Vite local quando necessário e abre o módulo em uma janela da própria suíte. Links externos continuam abrindo no navegador padrão.
+
 O servidor web usa módulos nativos do Node.js; `npm install` só é necessário para o wrapper Electron e o empacotamento.
 
 ## Esteira e portas
