@@ -65,6 +65,14 @@ npm test
 
 O teste HTTP espera o Hub disponível em `127.0.0.1:3000`; para uma checagem rápida, execute `npm start` em outro terminal antes de rodar os testes.
 
+Para validar o clone e os repositórios irmãos em um único comando (com o Hub já iniciado):
+
+```powershell
+npm run validate
+```
+
+Use `npm run validate -- -RequireModules` quando os três módulos irmãos forem obrigatórios na máquina.
+
 ## Colaboração
 
 1. Crie uma branch a partir de `main`.
