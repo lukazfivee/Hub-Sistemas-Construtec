@@ -181,13 +181,13 @@
           </div>
 
           <!-- CARD 03: CHAMADOS & O.S. -->
-          <div class="esteira-card disabled-state" id="card-chamados">
+          <div class="esteira-card" id="card-chamados">
             <div class="card-head">
               <div class="stage-tag-group">
                 <span class="stage-tag pending">03. Pós-Obra</span>
                 <kbd class="stage-kbd">Alt+3</kbd>
               </div>
-              <span class="service-status-badge preparing" id="status-chamados">Em Preparação</span>
+                <span class="service-status-badge preparing" id="status-chamados">Verificando</span>
             </div>
 
             <div class="card-body">
@@ -200,13 +200,21 @@
               <p class="card-desc">
                 Assistência técnica pós-obra, ordens de serviço corretivas e preventivas, técnicos de campo e histórico de garantia.
               </p>
+              <div class="chamados-live-summary" id="chamados-live-summary" aria-live="polite">
+                Conectando ao ChamadoPro oficial...
+              </div>
             </div>
 
             <div class="card-foot">
-              <button class="btn-card-action disabled" id="btn-action-chamados" type="button" disabled>
-                <span>Módulo em Preparação</span>
+              <button class="btn-card-action" id="btn-action-chamados" type="button">
+                <span>Abrir ChamadoPro</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
               </button>
-              <span class="card-port-tag">Porta :3334 (Futuro)</span>
+              <span class="card-port-tag" id="port-tag-chamados">API HTTPS • ChamadoPro oficial</span>
             </div>
           </div>
 
@@ -246,8 +254,8 @@
 
           <div class="form-group">
             <label for="input-url-chamados">URL do App de Chamados & O.S. (Etapa 03):</label>
-            <input type="url" id="input-url-chamados" placeholder="http://localhost:3334" required>
-            <small>Porta sugerida: http://localhost:3334</small>
+            <input type="url" id="input-url-chamados" placeholder="https://chamadopro-app.lucas-coelho5923.workers.dev" required>
+            <small>ChamadoPro oficial em HTTPS ou serviço local na porta 3334.</small>
           </div>
 
           <div class="hub-modal-actions">

@@ -5,7 +5,7 @@
 // ==========================================================================
 
 (function () {
-  const { hubState, showNotification, isLocalUrl } = window.HubConfig;
+  const { hubState, showNotification, isAllowedSystemUrl, isLocalUrl } = window.HubConfig;
 
   async function launchOrcamentos() {
     const orcUrl = hubState.urls.orcamentos || 'http://localhost:5173';
@@ -38,8 +38,15 @@
     }
   }
 
-  function infoChamados() {
-    showNotification('Módulo Chamados & O.S. em preparação. A pasta do projeto será conectada em breve.', 'info');
+  function launchChamados() {
+    const url = hubState.urls.chamados || 'https://chamadopro-app.lucas-coelho5923.workers.dev';
+    if (!hubState.statuses.chamados) {
+      showNotification('ChamadoPro está offline ou não respondeu ao health-check.', 'error');
+      return;
+    }
+    if (isAllowedSystemUrl(url, 'chamados')) {
+      window.open(url, '_blank', 'noopener');
+    }
   }
 
   function initTheme() {
@@ -78,10 +85,10 @@
     // Ação 03: Chamados & O.S.
     document.getElementById('btn-action-chamados')?.addEventListener('click', (e) => {
       e.stopPropagation();
-      infoChamados();
+      launchChamados();
     });
     document.getElementById('card-chamados')?.addEventListener('click', () => {
-      infoChamados();
+      launchChamados();
     });
 
     // Refresh manual de conexão
@@ -99,7 +106,7 @@
         launchCentro();
       } else if (e.altKey && e.key === '3') {
         e.preventDefault();
-        infoChamados();
+        launchChamados();
       }
     });
   }
@@ -115,6 +122,6 @@
   window.HubApp = {
     launchOrcamentos,
     launchCentro,
-    infoChamados,
+    launchChamados,
   };
 })();

@@ -6,6 +6,8 @@ const { spawn } = require('child_process');
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+const CHAMADOS_DEFAULT_URL = 'https://chamadopro-app.lucas-coelho5923.workers.dev';
+const CHAMADOS_REMOTE_HOSTS = new Set(['chamadopro-app.lucas-coelho5923.workers.dev']);
 const ORCAMENTOS_DIR = path.resolve(__dirname, '..', 'Construtec orçamentos');
 let orcamentosProcess;
 
@@ -82,38 +84,70 @@ function normalizeLocalUrl(value) {
   }
 }
 
-// Teste de conexão local assíncrono com timeout de 1.2s
-function checkServiceHealth(targetUrl, timeoutMs = 1200) {
+function normalizeChamadosUrl(value) {
+  try {
+    const parsed = new URL(value);
+    const isLocal = LOCAL_HOSTS.has(parsed.hostname);
+    const isTrustedRemote = parsed.protocol === 'https:' && CHAMADOS_REMOTE_HOSTS.has(parsed.hostname);
+    if (!['http:', 'https:'].includes(parsed.protocol) || (!isLocal && !isTrustedRemote)) return null;
+    return parsed.toString().replace(/\/$/, '');
+  } catch {
+    return null;
+  }
+}
+
+// Teste de conexão assíncrono com timeout curto.
+function checkServiceHealth(targetUrl, timeoutMs = 1200, healthPath = '/', normalizeUrl = normalizeLocalUrl) {
   return new Promise((resolve) => {
     try {
-      const normalizedUrl = normalizeLocalUrl(targetUrl);
+      const normalizedUrl = normalizeUrl(targetUrl);
       if (!normalizedUrl) {
-        return resolve({ online: false, reason: 'URL local inválida', url: targetUrl });
+        return resolve({ online: false, reason: 'URL inválida', url: targetUrl });
       }
-
-      const parsed = new URL(normalizedUrl);
-      const client = http.get({
-        hostname: parsed.hostname,
-        port: parsed.port || 80,
-        path: parsed.pathname || '/',
-        timeout: timeoutMs,
-      }, (res) => {
-        resolve({ online: true, statusCode: res.statusCode, url: normalizedUrl });
-        res.resume();
-      });
-
-      client.on('timeout', () => {
-        client.destroy();
-        resolve({ online: false, reason: 'Timeout', url: normalizedUrl });
-      });
-
-      client.on('error', () => {
-        resolve({ online: false, reason: 'Indisponível', url: normalizedUrl });
-      });
+      fetch(`${normalizedUrl}${healthPath}`, { signal: AbortSignal.timeout(timeoutMs) })
+        .then((response) => resolve({ online: response.status < 500, statusCode: response.status, url: normalizedUrl }))
+        .catch((error) => resolve({ online: false, reason: error?.name === 'TimeoutError' ? 'Timeout' : 'Indisponível', url: normalizedUrl }));
     } catch (err) {
       resolve({ online: false, reason: err.message, url: targetUrl });
     }
   });
+}
+
+async function fetchChamadosSummary(chamadosUrl, timeoutMs = 1800) {
+  const key = String(process.env.CONSTRUTEC_CHAMADOS_INTEGRATION_KEY || '').trim();
+  if (!key) return null;
+  try {
+    const normalizedUrl = normalizeChamadosUrl(chamadosUrl);
+    if (!normalizedUrl) return null;
+    const response = await fetch(`${normalizedUrl}/v1/integracao/hub/status`, {
+      headers: { 'X-Construtec-Hub-Key': key },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data?.tickets ? { ...data.tickets, service: data.service, database: data.database } : null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchChamadosTickets(chamadosUrl, limit = 5, timeoutMs = 1800) {
+  const key = String(process.env.CONSTRUTEC_CHAMADOS_INTEGRATION_KEY || '').trim();
+  if (!key) return null;
+  try {
+    const normalizedUrl = normalizeChamadosUrl(chamadosUrl);
+    if (!normalizedUrl) return null;
+    const safeLimit = Math.min(Math.max(Number(limit) || 5, 1), 25);
+    const response = await fetch(`${normalizedUrl}/v1/integracao/hub/chamados?limit=${safeLimit}`, {
+      headers: { 'X-Construtec-Hub-Key': key },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return Array.isArray(data?.chamados) ? data.chamados : null;
+  } catch {
+    return null;
+  }
 }
 
 // Consulta de resumo consolidado da carteira no Centro de Custos
@@ -169,12 +203,12 @@ const server = http.createServer(async (req, res) => {
     const searchParams = parsedUrl.searchParams;
     const customOrcamentosUrl = normalizeLocalUrl(searchParams.get('orcamentosUrl')) || 'http://localhost:5173';
     const customCentroCustosUrl = normalizeLocalUrl(searchParams.get('centroCustosUrl')) || 'http://localhost:3333';
-    const customChamadosUrl = normalizeLocalUrl(searchParams.get('chamadosUrl')) || 'http://localhost:3334';
+    const customChamadosUrl = normalizeChamadosUrl(searchParams.get('chamadosUrl')) || CHAMADOS_DEFAULT_URL;
 
     const [orcamentosStatus, initialCentroStatus, chamadosStatus] = await Promise.all([
       checkServiceHealth(customOrcamentosUrl),
       checkServiceHealth(customCentroCustosUrl),
-      checkServiceHealth(customChamadosUrl),
+      checkServiceHealth(customChamadosUrl, 1800, '/v1/health', normalizeChamadosUrl),
     ]);
 
     let centroStatus = initialCentroStatus;
@@ -194,6 +228,10 @@ const server = http.createServer(async (req, res) => {
     if (centroStatus.online) {
       portfolio = await fetchPortfolioSummary(effectiveCentroUrl);
     }
+
+    const [chamadosSummary, chamadosTickets] = chamadosStatus.online
+      ? await Promise.all([fetchChamadosSummary(customChamadosUrl), fetchChamadosTickets(customChamadosUrl)])
+      : [null, null];
 
     const isOrcOnline = isOrcamentosRunning() || Boolean(orcamentosStatus?.online);
 
@@ -227,7 +265,8 @@ const server = http.createServer(async (req, res) => {
           stageTitle: 'Operação & Pós-Obra',
           url: customChamadosUrl,
           online: chamadosStatus.online,
-          statusLabel: chamadosStatus.online ? 'Online' : 'Em Preparação',
+          statusLabel: chamadosStatus.online ? 'Online' : 'Offline',
+          integration: chamadosSummary ? { ...chamadosSummary, recentes: chamadosTickets || [] } : null,
         },
       },
     };

@@ -47,6 +47,7 @@ test('GET /api/status retorna estrutura completa da esteira de 3 etapas', async 
   assert.equal(chamados.stageTitle, 'Operação & Pós-Obra');
   assert.ok(typeof chamados.online === 'boolean');
   assert.ok(chamados.statusLabel);
+  assert.ok('integration' in chamados);
 });
 
 test('GET /api/portfolio-summary responde com propriedade portfolio', async () => {
@@ -63,6 +64,7 @@ test('Arquivos estáticos são servidos com MIME e UTF-8 corretos', async () => 
   assert.ok(indexRes.body.includes('esteira-deck'));
   assert.ok(indexRes.body.includes('hub-config.js'));
   assert.ok(indexRes.body.includes('hub-pipeline.css'));
+  assert.ok(indexRes.body.includes('Abrir ChamadoPro'));
 
   const cssRes = await get('/hub-pipeline.css');
   assert.equal(cssRes.statusCode, 200);
