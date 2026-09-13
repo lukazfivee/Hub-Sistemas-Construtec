@@ -5,7 +5,7 @@
 // ==========================================================================
 
 (function () {
-  const { DEFAULT_URLS, hubState, isLocalUrl, showNotification } = window.HubConfig;
+  const { DEFAULT_URLS, hubState, isAllowedSystemUrl, showNotification } = window.HubConfig;
 
   function loadSavedUrls() {
     try {
@@ -20,8 +20,8 @@
   }
 
   function saveUrls(newUrls) {
-    if (!Object.values(newUrls).every(isLocalUrl)) {
-      showNotification('Use apenas URLs locais (localhost ou 127.0.0.1).', 'error');
+    if (!Object.entries(newUrls).every(([key, value]) => isAllowedSystemUrl(value, key))) {
+      showNotification('Use URLs locais; o ChamadoPro também aceita o endereço oficial em HTTPS.', 'error');
       return false;
     }
 

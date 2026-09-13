@@ -29,7 +29,10 @@ $siblings = @(
   @{ Name = 'Chamados'; Path = Join-Path $parent 'chamadopro' }
 )
 foreach ($sibling in $siblings) {
-  Add-Check $sibling.Name (Test-Path $sibling.Path) $sibling.Path
+  $siblingPath = [string]$sibling.Path
+  $siblingExists = $siblingPath -and (Test-Path -LiteralPath $siblingPath)
+  $siblingDetail = if ($siblingPath) { $siblingPath } else { 'não encontrado' }
+  Add-Check $sibling.Name $siblingExists $siblingDetail
 }
 
 try {

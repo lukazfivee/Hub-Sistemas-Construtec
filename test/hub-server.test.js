@@ -35,6 +35,23 @@ test('instância identifica PID próprio e serve fontes atuais em UTF-8', async 
   assert.match(index.body, /hub-config.js/);
   const css = await get('/hub-pipeline.css'); assert.match(css.headers['content-type'], /text\/css/);
 });
+
+test('Arquivos estáticos são servidos com MIME e UTF-8 corretos', async () => {
+  const indexRes = await get('/');
+  assert.equal(indexRes.status, 200);
+  assert.ok(indexRes.headers['content-type']?.includes('text/html'));
+  assert.ok(indexRes.body.includes('hub-config.js'));
+  assert.ok(indexRes.body.includes('hub-pipeline.css'));
+
+  const cssRes = await get('/hub-pipeline.css');
+  assert.equal(cssRes.status, 200);
+  assert.ok(cssRes.headers['content-type']?.includes('text/css'));
+
+  const jsRes = await get('/hub-config.js');
+  assert.equal(jsRes.status, 200);
+  assert.ok(jsRes.headers['content-type']?.includes('application/javascript'));
+  assert.ok(jsRes.body.includes('SYSTEMS_META'));
+});
 test('porta ocupada rejeita boot em vez de reutilizar servidor alheio', async () => {
   const rival = http.createServer();
   await assert.rejects(new Promise((resolve, reject) => {

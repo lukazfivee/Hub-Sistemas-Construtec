@@ -8,8 +8,10 @@
   const DEFAULT_URLS = {
     orcamentos: 'http://localhost:5173',
     centro: 'http://localhost:3333',
-    chamados: 'http://localhost:3334',
+    chamados: 'https://chamadopro-app.lucas-coelho5923.workers.dev',
   };
+
+  const CHAMADOS_REMOTE_HOSTS = new Set(['chamadopro-app.lucas-coelho5923.workers.dev']);
 
   const SYSTEMS_META = {
     orcamentos: {
@@ -64,6 +66,17 @@
     }
   }
 
+  function isAllowedSystemUrl(value, systemKey) {
+    if (isLocalUrl(value)) return true;
+    if (systemKey !== 'chamados') return false;
+    try {
+      const parsed = new URL(value);
+      return parsed.protocol === 'https:' && CHAMADOS_REMOTE_HOSTS.has(parsed.hostname);
+    } catch {
+      return false;
+    }
+  }
+
   function showNotification(message, variant = 'info') {
     const container = document.getElementById('hub-notifications');
     if (!container) return;
@@ -91,6 +104,7 @@
     SYSTEM_ORDER_STORAGE_KEY,
     hubState,
     isLocalUrl,
+    isAllowedSystemUrl,
     showNotification,
   };
 })();

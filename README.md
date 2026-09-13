@@ -36,7 +36,7 @@ O servidor web usa módulos nativos do Node.js; `npm install` só é necessário
 |---|---|---|---|
 | 01 | Construtec Orçamentos | `http://localhost:5173` | integrado ao monitor e launcher |
 | 02 | Centro de Custos v3 | `http://localhost:3333` | integrado, com health-check e carteira |
-| 03 | Chamados & O.S. | `http://localhost:3334` | em preparação |
+| 03 | Chamados & O.S. | `https://chamadopro-app.lucas-coelho5923.workers.dev` | integrado por API protegida |
 | Hub | Portal | `http://127.0.0.1:3000` | ponto de entrada |
 
 O Hub também detecta o fallback do Centro em `:3456`. As URLs locais podem ser ajustadas no modal “Configurar Portas Locais”.
@@ -44,6 +44,17 @@ O Hub também detecta o fallback do Centro em `:3456`. As URLs locais podem ser 
 ## Carteira consolidada
 
 Defina `CONSTRUTEC_INTEGRATION_KEY` no ambiente do processo do Hub com a mesma chave configurada no Centro de Custos. O Hub não carrega `.env` automaticamente. Sem a variável, o monitor e a esteira funcionam, mas a carteira fica indisponível.
+
+Para o ChamadoPro, defina `CONSTRUTEC_CHAMADOS_INTEGRATION_KEY` no ambiente do Hub com o mesmo valor do segredo `HUB_INTEGRATION_KEY` configurado no Worker. O Hub consulta o health-check público e, com a chave, os endpoints protegidos de resumo e chamados recentes. A chave nunca é enviada ao navegador nem salva no `localStorage`.
+
+Exemplo no PowerShell:
+
+```powershell
+$env:CONSTRUTEC_CHAMADOS_INTEGRATION_KEY = 'mesma-chave-do-segredo-HUB_INTEGRATION_KEY'
+npm start
+```
+
+Durante o desenvolvimento, a Etapa 03 também pode apontar para um serviço local em `localhost:3334`. O endereço oficial e os endereços locais permitidos são validados pelo Hub.
 
 Nunca publique chaves, bancos, backups, logs ou arquivos `.env`.
 

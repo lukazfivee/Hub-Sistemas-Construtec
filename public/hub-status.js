@@ -88,26 +88,56 @@
         btnCentro.classList.toggle('primary', isCentroOnline);
       }
 
-      // 3. Chamados
+      // 3. Chamados & O.S.
+      const isChamadosOnline = Boolean(data.systems?.chamados?.online);
+      const chamadosIntegration = data.systems?.chamados?.integration;
+      hubState.statuses.chamados = isChamadosOnline;
       const statusChamados = document.getElementById('status-chamados');
       if (statusChamados) {
-        statusChamados.className = 'service-status-badge preparing';
-        statusChamados.textContent = 'Em Preparação';
+        statusChamados.className = `service-status-badge ${isChamadosOnline ? 'online' : 'preparing'}`;
+        statusChamados.textContent = isChamadosOnline ? (chamadosIntegration ? 'Online • API' : 'Online') : 'Offline';
+      }
+      const chamadosCard = document.getElementById('card-chamados');
+      if (chamadosCard) chamadosCard.classList.toggle('disabled-state', !isChamadosOnline);
+      const chamadosButton = document.getElementById('btn-action-chamados');
+      if (chamadosButton) {
+        chamadosButton.disabled = !isChamadosOnline;
+        chamadosButton.classList.toggle('disabled', !isChamadosOnline);
+        const buttonText = chamadosButton.querySelector('span');
+        if (buttonText) buttonText.textContent = isChamadosOnline ? 'Abrir ChamadoPro' : 'ChamadoPro Offline';
+      }
+      const chamadosPort = document.getElementById('port-tag-chamados');
+      if (chamadosPort) {
+        chamadosPort.textContent = chamadosIntegration
+          ? `${chamadosIntegration.abertos} abertos • ${chamadosIntegration.em_andamento} em andamento`
+          : (isChamadosOnline ? 'API online • chave do Hub pendente' : 'API do ChamadoPro indisponível');
+      }
+      const chamadosSummary = document.getElementById('chamados-live-summary');
+      if (chamadosSummary) {
+        chamadosSummary.className = `chamados-live-summary ${chamadosIntegration ? 'is-connected' : ''}`;
+        chamadosSummary.textContent = chamadosIntegration
+          ? `${chamadosIntegration.total} total • ${chamadosIntegration.abertos} abertos • ${chamadosIntegration.em_andamento} em andamento • ${chamadosIntegration.concluidos} concluídos`
+          : (isChamadosOnline
+            ? 'API online. Configure CONSTRUTEC_CHAMADOS_INTEGRATION_KEY para carregar os indicadores.'
+            : 'O ChamadoPro não respondeu ao teste de saúde.');
       }
 
       // 4. Status Global no Topbar
       const globalDot = document.getElementById('hub-global-dot');
       const globalText = document.getElementById('hub-global-status-text');
       if (globalDot && globalText) {
-        if (isCentroOnline && isOrcOnline) {
+        if (isCentroOnline && isOrcOnline && isChamadosOnline) {
           globalDot.className = 'hub-pulse-dot';
-          globalText.textContent = 'Orçamentos e Centro de Custos Online';
+          globalText.textContent = 'Esteira completa online';
         } else if (isCentroOnline) {
           globalDot.className = 'hub-pulse-dot';
           globalText.textContent = 'Centro de Custos Online (:3333)';
         } else if (isOrcOnline) {
           globalDot.className = 'hub-pulse-dot';
           globalText.textContent = 'Construtec Orçamentos Online (:5173)';
+        } else if (isChamadosOnline) {
+          globalDot.className = 'hub-pulse-dot';
+          globalText.textContent = 'ChamadoPro Online (API HTTPS)';
         } else {
           globalDot.className = 'hub-pulse-dot warning';
           globalText.textContent = 'Aguardando Inicialização dos Serviços';
