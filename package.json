@@ -20,17 +20,18 @@
   "license": "UNLICENSED",
   "dependencies": {},
   "devDependencies": {
-    "electron": "^41.7.1",
+    "electron": "41.10.7",
     "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "com.construtec.portal-hub",
     "productName": "Portal Hub Construtec",
+    "electronVersion": "41.10.7",
     "directories": { "output": "dist" },
-    "files": ["server.js", "public/**/*", "desktop/**/*", "package.json"],
+    "files": ["server.js", "public/**/*", "desktop/**/*", "lib/**/*", "package.json"],
     "win": {
       "target": [{ "target": "portable", "arch": ["x64"] }],
-      "icon": "public/assets/construtec-favicon.png"
+      "icon": "public/assets/construtec-favicon.ico"
     },
     "portable": { "artifactName": "Portal-Hub-Construtec-${version}-Portable.${ext}" }
   }

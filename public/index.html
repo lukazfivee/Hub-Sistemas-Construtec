@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="hub-theme.js"></script>
   <title>Portal Hub | Suíte de Sistemas Construtec</title>
   <meta name="description" content="Launcher corporativo e cockpit de esteira operacional da Construtec Engenharia: Orçamentos, Centro de Custos e Chamados.">
   <link rel="icon" type="image/png" href="assets/construtec-favicon.png">
   <link rel="stylesheet" href="refined.css">
   <link rel="stylesheet" href="hub-pipeline.css">
   <link rel="stylesheet" href="hub-portfolio.css">
+  <link rel="stylesheet" href="desktop-controls.css">
 </head>
 <body>
   <div class="hub-app">
@@ -54,6 +56,11 @@
             <span>Engenharia</span>
           </div>
         </div>
+      </div>
+      <div id="desktop-controls" class="desktop-controls" role="group" aria-label="Controles da janela" hidden>
+        <button id="desktop-minimize" type="button" aria-label="Minimizar janela" title="Minimizar janela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+        <button id="desktop-maximize" type="button" aria-label="Maximizar janela" title="Maximizar janela"><svg class="maximize-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14"/></svg><svg class="restore-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9V5h10v10h-4"/><rect x="5" y="9" width="10" height="10"/></svg></button>
+        <button id="desktop-close" type="button" aria-label="Fechar janela" title="Fechar janela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
       </div>
     </header>
 
@@ -267,5 +274,6 @@
   <script src="hub-status.js"></script>
   <script src="hub-portfolio.js"></script>
   <script src="app.js"></script>
+  <script src="desktop-controls.js"></script>
 </body>
 </html>

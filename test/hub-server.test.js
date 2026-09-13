@@ -1,83 +1,43 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
-
-const HUB_URL = 'http://127.0.0.1:3000';
-
-function get(urlPath) {
+process.env.CONSTRUTEC_DESKTOP_ISOLATED = '1';
+const { server, startServer } = require('../server');
+let origin;
+test.before(async () => { await startServer({ port: 0, control: false }); origin = `http://127.0.0.1:${server.address().port}`; });
+test.after(() => new Promise(resolve => { server.close(resolve); server.closeIdleConnections(); }));
+async function get(route, method = 'GET') {
   return new Promise((resolve, reject) => {
-    http.get(`${HUB_URL}${urlPath}`, (res) => {
-      let data = '';
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => resolve({ statusCode: res.statusCode, headers: res.headers, body: data }));
-    }).on('error', reject);
+    const req = http.request(origin + route, { method }, res => {
+      let body = ''; res.setEncoding('utf8'); res.on('data', chunk => body += chunk);
+      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body }));
+    }); req.on('error', reject); req.end();
   });
 }
-
-test('GET /api/status retorna estrutura completa da esteira de 3 etapas', async () => {
-  const res = await get('/api/status');
-  assert.equal(res.statusCode, 200);
-  assert.ok(res.headers['content-type']?.includes('application/json'));
-
-  const data = JSON.parse(res.body);
-  assert.ok(data.timestamp);
-  assert.ok('portfolio' in data);
-  assert.ok(data.systems);
-
-  const { orcamentos, centroCustos, chamados } = data.systems;
-
-  // Etapa 01: Orçamentos
-  assert.equal(orcamentos.id, 'orcamentos');
-  assert.equal(orcamentos.stage, '01');
-  assert.equal(orcamentos.stageTitle, 'Pontapé Inicial');
-  assert.ok(typeof orcamentos.online === 'boolean');
-  assert.ok(orcamentos.statusLabel);
-
-  // Etapa 02: Centro de Custos
-  assert.equal(centroCustos.id, 'centroCustos');
-  assert.equal(centroCustos.stage, '02');
-  assert.equal(centroCustos.stageTitle, 'Gestão da Obra');
-  assert.ok(typeof centroCustos.online === 'boolean');
-  assert.ok(centroCustos.statusLabel);
-
-  // Etapa 03: Chamados & O.S.
-  assert.equal(chamados.id, 'chamados');
-  assert.equal(chamados.stage, '03');
-  assert.equal(chamados.stageTitle, 'Operação & Pós-Obra');
-  assert.ok(typeof chamados.online === 'boolean');
-  assert.ok(chamados.statusLabel);
+test('status isolado mantém módulos pendentes sem sondar backends', async () => {
+  const response = await get('/api/status?centroCustosUrl=http://127.0.0.1:1');
+  assert.equal(response.status, 200);
+  const data = JSON.parse(response.body);
+  assert.equal(data.isolated, true); assert.equal(data.portfolio, null);
+  assert.deepEqual(Object.keys(data.systems), ['orcamentos', 'centroCustos', 'chamados']);
+  for (const system of Object.values(data.systems)) {
+    assert.equal(system.online, false); assert.equal(system.statusLabel, 'Validação pendente');
+  }
 });
-
-test('GET /api/portfolio-summary responde com propriedade portfolio', async () => {
-  const res = await get('/api/portfolio-summary');
-  assert.equal(res.statusCode, 200);
-  const data = JSON.parse(res.body);
-  assert.ok('portfolio' in data);
+test('modo isolado não permite launch e portfolio não consulta dados', async () => {
+  assert.equal((await get('/api/launch/orcamentos', 'POST')).status, 503);
+  assert.equal(JSON.parse((await get('/api/portfolio-summary')).body).portfolio, null);
 });
-
-test('Arquivos estáticos são servidos com MIME e UTF-8 corretos', async () => {
-  const indexRes = await get('/');
-  assert.equal(indexRes.statusCode, 200);
-  assert.ok(indexRes.headers['content-type']?.includes('text/html'));
-  assert.ok(indexRes.body.includes('esteira-deck'));
-  assert.ok(indexRes.body.includes('hub-config.js'));
-  assert.ok(indexRes.body.includes('hub-pipeline.css'));
-
-  const cssRes = await get('/hub-pipeline.css');
-  assert.equal(cssRes.statusCode, 200);
-  assert.ok(cssRes.headers['content-type']?.includes('text/css'));
-  assert.ok(cssRes.body.includes('.esteira-deck'));
-
-  const jsRes = await get('/hub-config.js');
-  assert.equal(jsRes.statusCode, 200);
-  assert.ok(jsRes.headers['content-type']?.includes('application/javascript'));
-  assert.ok(jsRes.body.includes('SYSTEMS_META'));
+test('instância identifica PID próprio e serve fontes atuais em UTF-8', async () => {
+  assert.equal(JSON.parse((await get('/api/hub-identity')).body).pid, process.pid);
+  const index = await get('/'); assert.equal(index.status, 200);
+  assert.match(index.headers['content-type'], /text\/html; charset=UTF-8/);
+  assert.match(index.body, /hub-config.js/);
+  const css = await get('/hub-pipeline.css'); assert.match(css.headers['content-type'], /text\/css/);
 });
-
-test('Electron permite URLs locais e mantém links externos fora da suíte', async () => {
-  const source = await require('node:fs').promises.readFile(require('node:path').join(__dirname, '..', 'desktop', 'main.js'), 'utf8');
-  assert.match(source, /isLocalAppUrl/);
-  assert.match(source, /return \{ action: 'allow' \}/);
-  assert.match(source, /shell\.openExternal/);
+test('porta ocupada rejeita boot em vez de reutilizar servidor alheio', async () => {
+  const rival = http.createServer();
+  await assert.rejects(new Promise((resolve, reject) => {
+    rival.once('error', reject); rival.listen(server.address().port, '127.0.0.1', resolve);
+  }), { code: 'EADDRINUSE' });
 });

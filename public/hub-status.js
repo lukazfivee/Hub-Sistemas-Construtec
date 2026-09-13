@@ -7,6 +7,28 @@
 (function () {
   const { hubState } = window.HubConfig;
 
+  function renderPending() {
+    hubState.isolated = true;
+    for (const module of ['orcamentos', 'centro', 'chamados']) {
+      hubState.statuses[module] = false;
+      const badge = document.getElementById(`status-${module}`);
+      if (badge) { badge.className = 'service-status-badge preparing'; badge.textContent = 'Validação pendente'; }
+      const port = document.getElementById(`port-tag-${module}`);
+      if (port) port.textContent = 'Integração pendente';
+      const button = document.getElementById(`btn-action-${module}`);
+      button?.classList.remove('primary');
+      const label = button?.querySelector('span');
+      if (label) label.textContent = 'Consultar disponibilidade';
+    }
+    const global = document.getElementById('hub-global-status-text');
+    if (global) global.textContent = 'Integração pendente de validação';
+    const dot = document.getElementById('hub-global-dot');
+    if (dot) dot.className = 'hub-pulse-dot warning';
+    const portfolio = document.getElementById('hub-portfolio-container');
+    if (portfolio) portfolio.textContent = 'Indicadores financeiros aguardando validação da integração.';
+    document.querySelector('.hub-card-portfolio-chip')?.remove();
+  }
+
   async function checkSystemsStatus() {
     const refreshBtn = document.getElementById('btn-refresh-status');
     if (refreshBtn) refreshBtn.style.opacity = '0.5';
@@ -22,6 +44,11 @@
       if (!res.ok) throw new Error('Falha ao consultar status');
 
       const data = await res.json();
+      if (data.isolated || window.construtecDesktop?.isDesktop) {
+        renderPending();
+        return;
+      }
+      hubState.isolated = false;
 
       // 1. Orçamentos
       const isOrcOnline = Boolean(data.systems?.orcamentos?.online);
@@ -99,6 +126,7 @@
   }
 
   function startStatusPolling(intervalMs = 10000) {
+    if (window.construtecDesktop?.isDesktop) renderPending();
     checkSystemsStatus();
     return setInterval(checkSystemsStatus, intervalMs);
   }

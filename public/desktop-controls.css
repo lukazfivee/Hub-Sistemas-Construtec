@@ -1,0 +1,32 @@
+:root { --hub-scroll-thumb: #697386; --hub-scroll-hover: #172033; }
+html.dark { --hub-scroll-thumb: #8fa0b5; --hub-scroll-hover: #f2f7fa; }
+html, body { margin: 0; min-width: 0; }
+* { scrollbar-color: var(--hub-scroll-thumb) var(--hub-bg); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: var(--hub-bg); }
+::-webkit-scrollbar-thumb { background: var(--hub-scroll-thumb); border: 2px solid var(--hub-bg); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--hub-scroll-hover); }
+.desktop-controls[hidden] { display: none; }
+.hub-desktop .hub-topbar { -webkit-app-region: drag; padding-right: 0; gap: 10px; }
+.hub-desktop .hub-topbar-actions { -webkit-app-region: no-drag; }
+.hub-desktop .hub-topbar button, .hub-desktop .hub-topbar a { -webkit-app-region: no-drag; }
+.desktop-controls { display: flex; align-self: stretch; flex-shrink: 0; }
+.desktop-controls button { width: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 0; color: var(--hub-topbar-text); background: transparent; cursor: pointer; -webkit-app-region: no-drag; }
+.desktop-controls button:hover { background: var(--hub-topbar-border); }
+.desktop-controls #desktop-close:hover { background: #b42318; color: #fff; }
+.desktop-controls svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.desktop-controls .restore-icon { display: none; }
+#desktop-maximize[data-maximized="true"] .maximize-icon { display: none; }
+#desktop-maximize[data-maximized="true"] .restore-icon { display: inline; }
+.hub-topbar button:focus-visible { outline: 2px solid #2f7cf4; outline-offset: -3px; }
+.hub-main-deck { min-width: 0; }
+@media (max-width: 1024px) {
+  .hub-desktop .hub-topbar-center { display: none; }
+  .hub-desktop .hub-topbar-actions { gap: 6px; }
+}
+@media (max-width: 600px) {
+  .hub-desktop .hub-topbar { padding-left: 8px; gap: 4px; }
+  .hub-desktop .hub-brand-text, .hub-desktop .hub-brand-divider,
+  .hub-desktop .hub-profile-pill { display: none; }
+  .hub-desktop .hub-topbar-actions { gap: 4px; }
+}

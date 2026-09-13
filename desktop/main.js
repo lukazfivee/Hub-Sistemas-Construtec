@@ -1,90 +1,54 @@
-// ==========================================================================
-// PORTAL HUB CONSTRUTEC - ELECTRON MAIN PROCESS
-// Launcher Desktop Executivo
-// Limite: MAX_LINES <= 350
-// ==========================================================================
-
-const { app, BrowserWindow, shell } = require('electron');
-const path = require('path');
-const http = require('http');
-
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const path = require('node:path');
+const { installControls } = require('./window-controls');
+const HUB_ORIGIN = 'http://127.0.0.1:3010';
+if (process.env.CONSTRUTEC_DESKTOP_USER_DATA && path.isAbsolute(process.env.CONSTRUTEC_DESKTOP_USER_DATA)) {
+  app.setPath('userData', process.env.CONSTRUTEC_DESKTOP_USER_DATA);
+}
 let mainWindow;
-
-function isLocalAppUrl(value) {
-  try {
-    const url = new URL(value);
-    return ['http:', 'https:'].includes(url.protocol)
-      && ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
-  } catch {
-    return false;
-  }
-}
-
-function checkServerReady(port = 3000, maxRetries = 20) {
-  return new Promise((resolve) => {
-    let retries = 0;
-    const check = () => {
-      const req = http.get(`http://127.0.0.1:${port}/api/status`, (res) => {
-        res.resume();
-        resolve(true);
-      });
-      req.on('error', () => {
-        retries += 1;
-        if (retries >= maxRetries) return resolve(false);
-        setTimeout(check, 300);
-      });
-      req.setTimeout(500, () => {
-        req.destroy();
-        retries += 1;
-        if (retries >= maxRetries) return resolve(false);
-        setTimeout(check, 300);
-      });
-    };
-    check();
-  });
-}
+let server;
+let creating;
 
 async function createWindow() {
-  require('../server');
-
-  await checkServerReady(3000);
-
-  mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 1024,
-    minHeight: 700,
-    title: 'Portal Hub Construtec',
-    icon: path.join(__dirname, '..', 'public', 'assets', 'construtec-favicon.png'),
-    backgroundColor: '#071926',
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: false,
-      contextIsolation: true,
-      sandbox: true,
-    },
-  });
-
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (isLocalAppUrl(url)) return { action: 'allow' };
-    shell.openExternal(url);
-    return { action: 'deny' };
-  });
-
-  await mainWindow.loadURL('http://127.0.0.1:3000');
+  if (mainWindow && !mainWindow.isDestroyed()) { mainWindow.focus(); return; }
+  if (creating) return creating;
+  creating = (async () => {
+    if (!server) {
+      process.env.PORT = '3010';
+      process.env.CONSTRUTEC_DESKTOP_ISOLATED = '1';
+      const hub = require('../server');
+      await hub.startServer({ port: 3010, control: false });
+      server = hub.server;
+    }
+    mainWindow = new BrowserWindow({
+      width: 1400, height: 900, minWidth: 1024, minHeight: 700,
+      title: 'Portal Hub Construtec', frame: false,
+      icon: path.join(__dirname, '..', 'public', 'assets', 'construtec-favicon.png'),
+      backgroundColor: '#071926', autoHideMenuBar: true,
+      webPreferences: { preload: path.join(__dirname, 'preload.js'),
+        nodeIntegration: false, contextIsolation: true, sandbox: true },
+    });
+    const removeControls = installControls({ window: mainWindow, ipcMain, shell, origin: HUB_ORIGIN });
+    mainWindow.once('closed', () => { removeControls(); mainWindow = null; });
+    await mainWindow.loadURL(HUB_ORIGIN);
+  })();
+  try { await creating; } finally { creating = null; }
 }
-
-app.whenReady().then(createWindow);
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+function openWindow() {
+  createWindow().catch(() => {
+    dialog.showErrorBox('Portal Hub indisponível',
+      'Não foi possível iniciar a instância própria do Hub na porta 3010. Verifique se a porta está ocupada e tente novamente.');
     app.quit();
-  }
-});
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
+  });
+}
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) { if (mainWindow.isMinimized()) mainWindow.restore(); mainWindow.focus(); }
+  });
+  app.whenReady().then(openWindow);
+  app.on('activate', openWindow);
+  app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+  app.on('before-quit', () => { if (server) { server.close(); server.closeIdleConnections(); } });
+}

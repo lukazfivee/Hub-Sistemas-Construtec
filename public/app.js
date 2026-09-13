@@ -7,7 +7,14 @@
 (function () {
   const { hubState, showNotification, isLocalUrl } = window.HubConfig;
 
+  function integrationPending() {
+    if (!window.construtecDesktop?.isDesktop && !hubState.isolated) return false;
+    showNotification('Integração dos módulos pendente de validação.', 'info');
+    return true;
+  }
+
   async function launchOrcamentos() {
+    if (integrationPending()) return;
     const orcUrl = hubState.urls.orcamentos || 'http://localhost:5173';
     if (hubState.statuses.orcamentos) {
       if (isLocalUrl(orcUrl)) {
@@ -32,6 +39,7 @@
   }
 
   function launchCentro() {
+    if (integrationPending()) return;
     const url = hubState.urls.centro || 'http://localhost:3333';
     if (isLocalUrl(url)) {
       window.open(url, '_blank', 'noopener');
@@ -39,21 +47,8 @@
   }
 
   function infoChamados() {
+    if (integrationPending()) return;
     showNotification('Módulo Chamados & O.S. em preparação. A pasta do projeto será conectada em breve.', 'info');
-  }
-
-  function initTheme() {
-    const themeToggle = document.getElementById('hub-theme-toggle');
-    const savedTheme = localStorage.getItem('construtec_theme');
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    themeToggle?.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('construtec_theme', isDark ? 'dark' : 'light');
-    });
   }
 
   function initInteractions() {
@@ -106,7 +101,6 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     window.HubSettings.loadSavedUrls();
-    initTheme();
     window.HubSettings.initSettingsModal();
     initInteractions();
     window.HubStatus.startStatusPolling(10000);

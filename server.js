@@ -141,6 +141,21 @@ async function fetchPortfolioSummary(centroCustosUrl, timeoutMs = 1800) {
 const server = http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || '127.0.0.1:3000'}`);
   const pathname = parsedUrl.pathname;
+  if (pathname === '/api/hub-identity') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify({ service: 'portal-hub', pid: process.pid }));
+  }
+  if (process.env.CONSTRUTEC_DESKTOP_ISOLATED === '1' && pathname.startsWith('/api/')) {
+    const systems = Object.fromEntries([
+      ['orcamentos', '01', 'Pontapé Inicial'], ['centroCustos', '02', 'Gestão da Obra'],
+      ['chamados', '03', 'Operação & Pós-Obra'],
+    ].map(([id, stage, stageTitle]) => [id, { id, stage, stageTitle, online: false,
+      statusLabel: 'Validação pendente', reason: 'Ativação operacional bloqueada' }]));
+    const status = pathname === '/api/status' || pathname === '/api/portfolio-summary' ? 200 : 503;
+    res.writeHead(status, { 'Content-Type': 'application/json; charset=UTF-8', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify({ isolated: true, timestamp: new Date().toISOString(),
+      portfolio: null, systems, error: status === 503 ? 'Ativação operacional pendente' : undefined }));
+  }
 
   if (pathname === '/api/launch/orcamentos' && req.method === 'POST') {
     try {
@@ -272,20 +287,21 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', async () => {
-  try {
-    await require('./lib/localControl').registerControl('portal-hub', () => {
-      server.close(() => process.exit(0));
-      server.closeIdleConnections();
+function startServer({ port = PORT, control = true } = {}) {
+  return new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(port, '127.0.0.1', async () => {
+      try {
+        if (control) await require('./lib/localControl').registerControl('portal-hub', () => {
+          server.close(() => process.exit(0)); server.closeIdleConnections();
+        });
+        server.removeListener('error', reject);
+        resolve(server);
+      } catch (error) { server.close(); reject(error); }
     });
-  } catch (error) {
-    console.error('Falha no controle local:', error.message);
-    server.close();
-    process.exitCode = 1;
-  }
-  console.log(`=======================================================`);
-  console.log(`  PORTAL HUB CONSTRUTEC (ESTEIRA OPERACIONAL)`);
-  console.log(`  Disponível em: http://localhost:${PORT}`);
-  console.log(`  Sem dependências externas • Inicialização Instantânea`);
-  console.log(`=======================================================`);
-});
+  });
+}
+module.exports = { server, startServer };
+if (require.main === module) startServer().then(() => {
+  console.log('Portal Hub disponível em http://127.0.0.1:' + server.address().port);
+}).catch(error => { console.error('Falha ao iniciar Hub:', error.message); process.exitCode = 1; });
