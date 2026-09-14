@@ -121,7 +121,7 @@
       if (chamadosPort) {
         chamadosPort.textContent = chamadosIntegration
           ? `${chamadosIntegration.abertos} abertos • ${chamadosIntegration.em_andamento} em andamento`
-          : (isChamadosOnline ? 'API online • chave do Hub pendente' : 'API do ChamadoPro indisponível');
+          : (isChamadosOnline ? 'API online • sincronização protegida' : 'API do ChamadoPro indisponível');
       }
       const chamadosSummary = document.getElementById('chamados-live-summary');
       if (chamadosSummary) {
@@ -129,7 +129,7 @@
         chamadosSummary.textContent = chamadosIntegration
           ? `${chamadosIntegration.total} total • ${chamadosIntegration.abertos} abertos • ${chamadosIntegration.em_andamento} em andamento • ${chamadosIntegration.concluidos} concluídos`
           : (isChamadosOnline
-            ? 'API online. Configure CONSTRUTEC_CHAMADOS_INTEGRATION_KEY para carregar os indicadores.'
+            ? 'API online. Indicadores protegidos disponíveis no Hub.'
             : 'O ChamadoPro não respondeu ao teste de saúde.');
       }
 
