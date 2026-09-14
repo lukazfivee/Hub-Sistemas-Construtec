@@ -37,7 +37,20 @@ O servidor web usa módulos nativos do Node.js; `npm install` só é necessário
 | 01 | Construtec Orçamentos | `http://localhost:5173` | integrado ao monitor e launcher |
 | 02 | Centro de Custos v3 | `http://localhost:3333` | integrado, com health-check e carteira |
 | 03 | Chamados & O.S. | `https://chamadopro-app.lucas-coelho5923.workers.dev` | integrado por API protegida |
-| Hub | Portal | `http://127.0.0.1:3000` | ponto de entrada |
+| Hub | Portal local | `http://127.0.0.1:3000` | ponto de entrada desktop |
+
+### Hub online
+
+O portal também pode ser publicado como Worker em `https://hub-sistemas-construtec.<conta>.workers.dev`. A publicação usa `src/index.js` para servir `public/` e consultar o ChamadoPro sem enviar a chave ao navegador.
+
+Configure o segredo do Worker online com o mesmo valor de `HUB_INTEGRATION_KEY` do ChamadoPro:
+
+```powershell
+npx wrangler secret put HUB_INTEGRATION_KEY
+npx wrangler deploy
+```
+
+No modo online, Orçamentos e Centro de Custos continuam identificados como módulos locais; o ChamadoPro é a integração remota operante.
 
 O Hub também detecta o fallback do Centro em `:3456`. As URLs locais podem ser ajustadas no modal “Configurar Portas Locais”.
 
