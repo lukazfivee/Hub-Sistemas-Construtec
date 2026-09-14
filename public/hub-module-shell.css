@@ -1,0 +1,6 @@
+.hub-module-shell { display: flex; flex-direction: column; gap: 12px; height: calc(100vh - 92px); padding: 18px 24px 24px; }
+.hub-module-shell[hidden], .hub-main-deck[hidden] { display: none; }
+.hub-module-toolbar { align-items: center; display: flex; gap: 18px; }
+.hub-module-toolbar span { color: var(--text-primary, #122036); font-size: 15px; font-weight: 700; }
+.hub-module-shell iframe { background: #fff; border: 1px solid rgba(18, 32, 54, .14); border-radius: 12px; flex: 1; min-height: 520px; width: 100%; }
+html.dark .hub-module-toolbar span { color: #e5eef8; }

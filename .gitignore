@@ -1,4 +1,5 @@
 node_modules/
+desktop.ini
 node_modules_old/
 dist/
 out/

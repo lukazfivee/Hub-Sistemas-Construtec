@@ -17,9 +17,7 @@
     if (integrationPending()) return;
     const orcUrl = hubState.urls.orcamentos || 'http://localhost:5173';
     if (hubState.statuses.orcamentos) {
-      if (isLocalUrl(orcUrl)) {
-        window.open(orcUrl, '_blank', 'noopener');
-      }
+      showModuleInShell(orcUrl, 'Construtec Orçamentos');
       return;
     }
     try {
@@ -29,9 +27,7 @@
       showNotification(data.alreadyRunning ? 'Construtec Orçamentos já está ativo.' : 'Iniciando Construtec Orçamentos...', 'success');
       window.setTimeout(() => {
         window.HubStatus.checkSystemsStatus();
-        if (isLocalUrl(orcUrl)) {
-          window.open(orcUrl, '_blank', 'noopener');
-        }
+        showModuleInShell(orcUrl, 'Construtec Orçamentos');
       }, 1800);
     } catch (error) {
       showNotification(error instanceof Error ? error.message : 'Falha ao iniciar Orçamentos.', 'error');
@@ -41,9 +37,24 @@
   function launchCentro() {
     if (integrationPending()) return;
     const url = hubState.urls.centro || 'http://localhost:3456';
-    if (isLocalUrl(url)) {
-      window.open(url, '_blank', 'noopener');
-    }
+    showModuleInShell(url, 'Centro de Custos v3');
+  }
+
+  function showModuleInShell(url, title) {
+    if (!isLocalUrl(url)) return;
+    const shell = document.getElementById('hub-module-shell');
+    const frame = document.getElementById('hub-module-frame');
+    if (!shell || !frame) return;
+    frame.src = url;
+    document.getElementById('hub-module-title').textContent = title;
+    document.getElementById('hub-main-deck')?.setAttribute('hidden', '');
+    shell.hidden = false;
+  }
+
+  function closeModuleShell() {
+    document.getElementById('hub-module-frame').src = 'about:blank';
+    document.getElementById('hub-module-shell').hidden = true;
+    document.getElementById('hub-main-deck')?.removeAttribute('hidden');
   }
 
   function launchChamados() {
@@ -88,6 +99,7 @@
 
     // Refresh manual de conexão
     document.getElementById('btn-refresh-status')?.addEventListener('click', window.HubStatus.checkSystemsStatus);
+    document.getElementById('btn-close-module')?.addEventListener('click', closeModuleShell);
 
     // Atalhos Globais de Teclado
     window.addEventListener('keydown', (e) => {

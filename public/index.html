@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="hub-pipeline.css">
   <link rel="stylesheet" href="hub-portfolio.css">
   <link rel="stylesheet" href="desktop-controls.css">
+  <link rel="stylesheet" href="hub-module-shell.css">
 </head>
 <body>
   <div class="hub-app">
@@ -234,6 +235,14 @@
       </section>
 
     </main>
+
+    <section class="hub-module-shell" id="hub-module-shell" hidden aria-label="Módulo integrado">
+      <div class="hub-module-toolbar">
+        <button class="btn-check-conns" id="btn-close-module" type="button">Voltar ao Hub</button>
+        <span id="hub-module-title">Módulo Construtec</span>
+      </div>
+      <iframe id="hub-module-frame" title="Módulo Construtec" referrerpolicy="no-referrer"></iframe>
+    </section>
 
     <!-- Modal de Configuração de Portas / URLs -->
     <div id="modal-settings" class="hub-modal-backdrop oculto" role="dialog" aria-modal="true" aria-labelledby="modal-settings-title">
