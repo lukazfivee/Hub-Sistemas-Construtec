@@ -89,8 +89,19 @@
       }
 
       // 3. Chamados & O.S.
-      const isChamadosOnline = Boolean(data.systems?.chamados?.online);
+      let isChamadosOnline = Boolean(data.systems?.chamados?.online);
       const chamadosIntegration = data.systems?.chamados?.integration;
+      // Fallback do health-check público: Workers diferentes podem não conseguir
+      // fazer subrequests entre si, mas o endpoint público do ChamadoPro aceita CORS.
+      if (!isChamadosOnline && /^https:\/\//i.test(hubState.urls.chamados || '')) {
+        try {
+          const healthResponse = await fetch(`${hubState.urls.chamados}/v1/health`, { cache: 'no-store' });
+          const health = await healthResponse.json();
+          isChamadosOnline = healthResponse.ok && Boolean(health?.ok || health?.database === 'connected');
+        } catch {
+          isChamadosOnline = false;
+        }
+      }
       hubState.statuses.chamados = isChamadosOnline;
       const statusChamados = document.getElementById('status-chamados');
       if (statusChamados) {
