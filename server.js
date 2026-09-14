@@ -203,7 +203,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname === '/api/portfolio-summary') {
-    const customCentroCustosUrl = normalizeLocalUrl(parsedUrl.searchParams.get('centroCustosUrl')) || 'http://localhost:3333';
+    const customCentroCustosUrl = normalizeLocalUrl(parsedUrl.searchParams.get('centroCustosUrl')) || 'http://localhost:3456';
     const portfolio = await fetchPortfolioSummary(customCentroCustosUrl);
     res.writeHead(200, {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -217,7 +217,7 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/status') {
     const searchParams = parsedUrl.searchParams;
     const customOrcamentosUrl = normalizeLocalUrl(searchParams.get('orcamentosUrl')) || 'http://localhost:5173';
-    const customCentroCustosUrl = normalizeLocalUrl(searchParams.get('centroCustosUrl')) || 'http://localhost:3333';
+    const customCentroCustosUrl = normalizeLocalUrl(searchParams.get('centroCustosUrl')) || 'http://localhost:3456';
     const customChamadosUrl = normalizeChamadosUrl(searchParams.get('chamadosUrl')) || CHAMADOS_DEFAULT_URL;
 
     const [orcamentosStatus, initialCentroStatus, chamadosStatus] = await Promise.all([
@@ -229,9 +229,8 @@ const server = http.createServer(async (req, res) => {
     let centroStatus = initialCentroStatus;
     let effectiveCentroUrl = customCentroCustosUrl;
 
-    if (!centroStatus.online && (customCentroCustosUrl.includes(':3333') || customCentroCustosUrl.includes(':3456'))) {
-      const altPort = customCentroCustosUrl.includes(':3333') ? '3456' : '3333';
-      const altUrl = customCentroCustosUrl.replace(/:(3333|3456)/, `:${altPort}`);
+    if (!centroStatus.online && customCentroCustosUrl.includes(':3333')) {
+      const altUrl = customCentroCustosUrl.replace(':3333', ':3456');
       const altStatus = await checkServiceHealth(altUrl);
       if (altStatus.online) {
         centroStatus = altStatus;

@@ -55,7 +55,7 @@ async function statusResponse(request, env) {
       },
       centroCustos: {
         id: 'centroCustos', title: 'Centro de Custos v3', stage: '02',
-        stageTitle: 'Gestão da Obra', url: 'http://localhost:3333',
+        stageTitle: 'Gestão da Obra', url: 'http://localhost:3456',
         online: false, statusLabel: 'Disponível apenas no computador local'
       },
       chamados: {

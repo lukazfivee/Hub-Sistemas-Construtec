@@ -40,7 +40,7 @@
 
   function launchCentro() {
     if (integrationPending()) return;
-    const url = hubState.urls.centro || 'http://localhost:3333';
+    const url = hubState.urls.centro || 'http://localhost:3456';
     if (isLocalUrl(url)) {
       window.open(url, '_blank', 'noopener');
     }

@@ -35,7 +35,7 @@ O servidor web usa módulos nativos do Node.js; `npm install` só é necessário
 | Etapa | Serviço | URL padrão | Estado |
 |---|---|---|---|
 | 01 | Construtec Orçamentos | `http://localhost:5173` | integrado ao monitor e launcher |
-| 02 | Centro de Custos v3 | `http://localhost:3333` | integrado, com health-check e carteira |
+| 02 | Centro de Custos v3 | `http://localhost:3456` | integrado na porta dedicada |
 | 03 | Chamados & O.S. | `https://chamadopro-app.lucas-coelho5923.workers.dev` | integrado por API protegida |
 | Hub | Portal local | `http://127.0.0.1:3000` | ponto de entrada desktop |
 
@@ -52,7 +52,7 @@ npx wrangler deploy
 
 No modo online, Orçamentos e Centro de Custos continuam identificados como módulos locais; o ChamadoPro é a integração remota operante.
 
-O Hub também detecta o fallback do Centro em `:3456`. As URLs locais podem ser ajustadas no modal “Configurar Portas Locais”.
+As URLs locais podem ser ajustadas no modal “Configurar Portas Locais”.
 
 ## Carteira consolidada
 

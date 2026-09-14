@@ -12,7 +12,15 @@
       const saved = localStorage.getItem('construtec_hub_urls');
       if (saved) {
         const parsed = JSON.parse(saved);
-        hubState.urls = { ...DEFAULT_URLS, ...parsed };
+        const candidate = { ...DEFAULT_URLS, ...parsed };
+        if (candidate.centro === 'http://localhost:3333') candidate.centro = DEFAULT_URLS.centro;
+        // Impede que uma URL salva em outro card troque os destinos da esteira.
+        hubState.urls = Object.fromEntries(
+          Object.entries(DEFAULT_URLS).map(([key, fallback]) => [
+            key,
+            isAllowedSystemUrl(candidate[key], key) ? candidate[key] : fallback,
+          ])
+        );
       }
     } catch (err) {
       console.warn('Erro ao ler URLs salvas:', err);

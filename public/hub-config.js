@@ -7,7 +7,7 @@
 (function () {
   const DEFAULT_URLS = {
     orcamentos: 'http://localhost:5173',
-    centro: 'http://localhost:3333',
+    centro: 'http://localhost:3456',
     chamados: 'https://chamadopro-app.lucas-coelho5923.workers.dev',
   };
 

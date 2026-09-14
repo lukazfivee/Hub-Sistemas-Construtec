@@ -82,7 +82,7 @@
         statusCentro.textContent = isCentroOnline ? 'Online' : 'Parado';
       }
       if (portCentro) {
-        portCentro.textContent = isCentroOnline ? 'Produção Ativa • :3333' : 'Porta :3333 (Parado)';
+        portCentro.textContent = isCentroOnline ? 'Produção Ativa • :3456' : 'Porta :3456 (fallback :3333)';
       }
       if (btnCentro) {
         btnCentro.classList.toggle('primary', isCentroOnline);
@@ -142,7 +142,7 @@
           globalText.textContent = 'Esteira completa online';
         } else if (isCentroOnline) {
           globalDot.className = 'hub-pulse-dot';
-          globalText.textContent = 'Centro de Custos Online (:3333)';
+          globalText.textContent = 'Centro de Custos Online (:3456)';
         } else if (isOrcOnline) {
           globalDot.className = 'hub-pulse-dot';
           globalText.textContent = 'Construtec Orçamentos Online (:5173)';
