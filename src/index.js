@@ -13,11 +13,12 @@ function getChamadosUrl(request, env) {
   }
 }
 
-async function fetchJson(url, init = {}) {
-  const response = await fetch(url, {
+async function fetchJson(url, init = {}, env) {
+  const request = new Request(url, {
     ...init,
     headers: { Accept: 'application/json', ...(init.headers || {}) }
   });
+  const response = await (env.CHAMADOPRO ? env.CHAMADOPRO.fetch(request) : fetch(request));
   if (!response.ok) throw new Error(`ChamadoPro respondeu HTTP ${response.status}`);
   return response.json();
 }
@@ -32,11 +33,11 @@ async function statusResponse(request, env) {
   let integration = null;
   let recentes = [];
   try {
-    health = await fetchJson(`${chamadosUrl}/v1/health`);
+    health = await fetchJson(`${chamadosUrl}/v1/health`, {}, env);
     if (env.HUB_INTEGRATION_KEY) {
       const headers = { 'X-Construtec-Hub-Key': env.HUB_INTEGRATION_KEY };
-      integration = await fetchJson(`${chamadosUrl}/v1/integracao/hub/status`, { headers });
-      const tickets = await fetchJson(`${chamadosUrl}/v1/integracao/hub/chamados?limit=5`, { headers });
+      integration = await fetchJson(`${chamadosUrl}/v1/integracao/hub/status`, { headers }, env);
+      const tickets = await fetchJson(`${chamadosUrl}/v1/integracao/hub/chamados?limit=5`, { headers }, env);
       recentes = Array.isArray(tickets?.chamados) ? tickets.chamados : [];
     }
   } catch {
